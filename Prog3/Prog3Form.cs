@@ -1,7 +1,9 @@
-﻿// Program 2
-// CIS 199-XX
-// Due: 3/7/2019
-// By: Andrew L. Wright (Students use Grading ID)
+﻿/*
+ * Grading ID: M5477
+ * Program: 3
+ * Due Date: Mar 30 2019
+ * Course Section: 01
+ */
 
 // This application calculates the marginal tax rate and
 // tax due for filers in 2019 tax year.
@@ -20,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Prog3
 {
@@ -86,6 +89,8 @@ namespace Prog3
             const decimal RATE6 = .35m; // 6th tax rate
             const decimal RATE7 = .37m; // 7th tax rate (HIGHEST)
 
+            decimal[] rates = {RATE2, RATE3, RATE4, RATE5, RATE6, RATE7 }; // An array of tax rates (except RATE1 since it isn't used in the loop)
+
             int income; // Filer's taxable income (input)
 
             decimal marginalRate; // Filer's calculated marginal tax rate
@@ -98,44 +103,40 @@ namespace Prog3
                 // Uses running total approach
                 // Math.Min returns the smaller of two values
 
-                marginalRate = RATE1; // Assume lowest rate
-                tax = Math.Min(income - 0, threshold1 - 0) * RATE1; // Always some from Tier 1
+                int[] thresholds = { threshold1, threshold2, threshold3, threshold4, threshold5, threshold6 }; // Array of thresholds set by 
 
-                if (income > threshold1) // At least some from tier 2?
+                marginalRate = RATE1; // Assume lowest rate
+                tax = Math.Min(income - 0, thresholds[0] - 0) * RATE1; // Always some from Tier 1
+
+                for (int x=0; x < thresholds.Length; ++x)
                 {
-                    marginalRate = RATE2;
-                    currentTax = Math.Min((income - threshold1), (threshold2 - threshold1)) * RATE2;
-                    tax += currentTax;
-                }
-                if (income > threshold2) // At least some from tier 3?
-                {
-                    marginalRate = RATE3;
-                    currentTax = Math.Min((income - threshold2), (threshold3 - threshold2)) * RATE3;
-                    tax += currentTax;
-                }
-                if (income > threshold3) // At least some from tier 4?
-                {
-                    marginalRate = RATE4;
-                    currentTax = Math.Min((income - threshold3), (threshold4 - threshold3)) * RATE4;
-                    tax += currentTax;
-                }
-                if (income > threshold4) // At least some from tier 5?
-                {
-                    marginalRate = RATE5;
-                    currentTax = Math.Min((income - threshold4), (threshold5 - threshold4)) * RATE5;
-                    tax += currentTax;
-                }
-                if (income > threshold5) // At least some from tier 6?
-                {
-                    marginalRate = RATE6;
-                    currentTax = Math.Min((income - threshold5), (threshold6 - threshold5)) * RATE6;
-                    tax += currentTax;
-                }
-                if (income > threshold6) // At least some from tier 7?
-                {
-                    marginalRate = RATE7;
-                    currentTax = (income - threshold6) * RATE7;
-                    tax += currentTax;
+                    if (income > thresholds[x])
+                    {
+                        Debug.WriteLine($"{income} > {thresholds[x]}");
+                        if (x != thresholds.Length - 1)
+                        {
+                            marginalRate = rates[x];
+                            currentTax = Math.Min((income - thresholds[x]), (thresholds[x + 1] - thresholds[x])) * rates[x];
+                            tax += currentTax;
+
+                            Debug.WriteLine("================================");
+                            Debug.WriteLine($"Using x = {x}");
+                            Debug.WriteLine($"Marginal rate set to {marginalRate:P}");
+                            Debug.WriteLine($"Calculated tax in this bracket is {currentTax:C}");
+                            Debug.WriteLine($"Cumulative tax is {tax:C}");
+                            Debug.WriteLine("================================");
+                        }
+                        else
+                        {
+                            marginalRate = rates[x];
+                            currentTax = (income - thresholds[x]) * rates[x];
+                            tax += currentTax;
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"{income} NOT > {thresholds[x]}");
+                    }
                 }
 
                 // Output results
