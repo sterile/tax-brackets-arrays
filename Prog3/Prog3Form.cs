@@ -22,7 +22,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace Prog3
 {
@@ -112,19 +111,11 @@ namespace Prog3
                 {
                     if (income > thresholds[x])
                     {
-                        Debug.WriteLine($"{income} > {thresholds[x]}");
                         if (x != thresholds.Length - 1)
                         {
                             marginalRate = rates[x];
                             currentTax = Math.Min((income - thresholds[x]), (thresholds[x + 1] - thresholds[x])) * rates[x];
                             tax += currentTax;
-
-                            Debug.WriteLine("================================");
-                            Debug.WriteLine($"Using x = {x}");
-                            Debug.WriteLine($"Marginal rate set to {marginalRate:P}");
-                            Debug.WriteLine($"Calculated tax in this bracket is {currentTax:C}");
-                            Debug.WriteLine($"Cumulative tax is {tax:C}");
-                            Debug.WriteLine("================================");
                         }
                         else
                         {
@@ -132,10 +123,6 @@ namespace Prog3
                             currentTax = (income - thresholds[x]) * rates[x];
                             tax += currentTax;
                         }
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"{income} NOT > {thresholds[x]}");
                     }
                 }
 
